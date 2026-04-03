@@ -1,13 +1,28 @@
 import { defineConfig } from 'vitepress'
 
 export default defineConfig({
-  title: "Docs Ricea Ion Raul",
-  description: "A VitePress Site",
+  title: "Documentation Ricea Raul",
+  description: "Documentation and guides for projects by Ricea Raul",
+  cleanUrls: true,
+  sitemap: {
+    hostname: 'https://docs.ricearaul.com',
+  },
+  head: [
+    ['meta', { name: 'author', content: 'Ricea Raul' }],
+    ['meta', { property: 'og:type', content: 'website' }],
+    ['meta', { property: 'og:site_name', content: 'Documentation Ricea Raul' }],
+    ['meta', { property: 'og:url', content: 'https://docs.ricearaul.com' }],
+    ['meta', { property: 'og:title', content: 'Documentation Ricea Raul' }],
+    ['meta', { property: 'og:description', content: 'Documentation and guides for projects by Ricea Raul' }],
+    ['meta', { name: 'twitter:card', content: 'summary' }],
+    ['meta', { name: 'twitter:title', content: 'Documentation Ricea Raul' }],
+    ['meta', { name: 'twitter:description', content: 'Documentation and guides for projects by Ricea Raul' }],
+    ['link', { rel: 'canonical', href: 'https://docs.ricearaul.com' }],
+  ],
   themeConfig: {
     nav: [
       { text: 'Home', link: '/' },
       { text: 'GTA V Map', link: '/gta-v-map/' },
-      { text: 'Examples', link: '/markdown-examples' }
     ],
 
     sidebar: {
@@ -36,15 +51,6 @@ export default defineConfig({
             { text: 'Angular', link: '/gta-v-map/frameworks/angular' },
           ]
         },
-      ],
-      '/': [
-        {
-          text: 'Examples',
-          items: [
-            { text: 'Markdown Examples', link: '/markdown-examples' },
-            { text: 'Runtime API Examples', link: '/api-examples' }
-          ]
-        }
       ],
     },
 

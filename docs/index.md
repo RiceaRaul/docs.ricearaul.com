@@ -1,25 +1,17 @@
 ---
-# https://vitepress.dev/reference/default-theme-home-page
 layout: home
 
 hero:
-  name: "Docs Ricea Ion Raul"
-  text: "A VitePress Site"
-  tagline: My great project tagline
+  name: "The Docs"
+  text: "Personal Documentation"
+  tagline: Projects, guides, and references
   actions:
     - theme: brand
-      text: Markdown Examples
-      link: /markdown-examples
-    - theme: alt
-      text: API Examples
-      link: /api-examples
+      text: GTA V Map
+      link: /gta-v-map/
 
 features:
-  - title: Feature A
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature B
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature C
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
+  - title: GTA V Map
+    details: Interactive GTA V map component for web applications
+    link: /gta-v-map/
 ---
-
