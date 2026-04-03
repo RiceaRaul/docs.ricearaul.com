@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "docs-ricearaul-com.fullname" . }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: ricearaul-com
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: ricearaul-com
+  template:
+    metadata:
+      labels:
+        app: ricearaul-com
+    spec:
+      containers:
+        - name: docs
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.targetPort }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}

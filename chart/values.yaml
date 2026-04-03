@@ -1,0 +1,29 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/ricearaul/docs.ricearaul.com
+  tag: latest
+  pullPolicy: Always
+
+namespace: docs-ricearaul-com
+
+service:
+  port: 80
+  targetPort: 80
+
+ingressRoute:
+  enabled: true
+  entryPoints:
+    - web
+  hosts:
+    - docs.ricearaul.com
+    - docs.ricearaul.inf.lan
+  priority: 10
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 64Mi
+  requests:
+    cpu: 50m
+    memory: 32Mi
