@@ -13,9 +13,22 @@ All configuration is done via HTML attributes or JavaScript properties.
 
 ### Style Previews
 
-| Satellite | Atlas | Grid |
-|:---------:|:-----:|:----:|
-| ![Satellite](../images/sattelite.png) | ![Atlas](../images/atlas.png) | ![Grid](../images/grid.png) |
+<table>
+  <thead>
+    <tr>
+      <th style="text-align:center">Satellite</th>
+      <th style="text-align:center">Atlas</th>
+      <th style="text-align:center">Grid</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><img src="/gta-v-map/sattelite.png" alt="Satellite"></td>
+      <td><img src="/gta-v-map/atlas.png" alt="Atlas"></td>
+      <td><img src="/gta-v-map/grid.png" alt="Grid"></td>
+    </tr>
+  </tbody>
+</table>
 
 Individual tile URLs take priority over `tile-base-url`. Example:
 
