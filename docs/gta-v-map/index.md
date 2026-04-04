@@ -35,6 +35,20 @@ const map = document.querySelector('gta-v-map');
 map.addMarker({ x: 100, y: 200, icon: 1, popup: '<b>Dynamic</b>' });
 ```
 
+## Map Styles
+
+The component supports three built-in tile styles:
+
+| Satellite | Atlas | Grid |
+|:---------:|:-----:|:----:|
+| ![Satellite](./images/sattelite.png) | ![Atlas](./images/atlas.png) | ![Grid](./images/grid.png) |
+
+Set the initial style with the `default-style` attribute:
+
+```html
+<gta-v-map default-style="satellite"></gta-v-map>
+```
+
 ## Sections
 
 - [Installation](./getting-started/installation)

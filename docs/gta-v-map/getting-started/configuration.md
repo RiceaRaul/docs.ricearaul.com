@@ -11,6 +11,12 @@ All configuration is done via HTML attributes or JavaScript properties.
 | `atlas-url` | `string` | — | Override URL template for atlas tiles |
 | `grid-url` | `string` | — | Override URL template for grid tiles |
 
+### Style Previews
+
+| Satellite | Atlas | Grid |
+|:---------:|:-----:|:----:|
+| ![Satellite](../images/sattelite.png) | ![Atlas](../images/atlas.png) | ![Grid](../images/grid.png) |
+
 Individual tile URLs take priority over `tile-base-url`. Example:
 
 ```html
