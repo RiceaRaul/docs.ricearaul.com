@@ -23,6 +23,7 @@ export default defineConfig({
     nav: [
       { text: 'Home', link: '/' },
       { text: 'GTA V Map', link: '/gta-v-map/' },
+      { text: 'ManualMapping.Net', link: '/manual-mapping/' },
     ],
 
     sidebar: {
@@ -49,6 +50,32 @@ export default defineConfig({
             { text: 'Vanilla HTML', link: '/gta-v-map/frameworks/vanilla' },
             { text: 'React', link: '/gta-v-map/frameworks/react' },
             { text: 'Angular', link: '/gta-v-map/frameworks/angular' },
+          ]
+        },
+      ],
+      '/manual-mapping/': [
+        {
+          text: 'Getting Started',
+          items: [
+            { text: 'Overview', link: '/manual-mapping/' },
+            { text: 'Installation', link: '/manual-mapping/getting-started/installation' },
+            { text: 'Configuration', link: '/manual-mapping/getting-started/configuration' },
+          ]
+        },
+        {
+          text: 'API Reference',
+          items: [
+            { text: 'IMapper', link: '/manual-mapping/api/mapper' },
+            { text: 'TypeConverter', link: '/manual-mapping/api/type-converter' },
+            { text: 'BidirectionalConverter', link: '/manual-mapping/api/bidirectional-converter' },
+          ]
+        },
+        {
+          text: 'Guides',
+          items: [
+            { text: 'Dependency Injection', link: '/manual-mapping/guides/dependency-injection' },
+            { text: 'ProjectTo & SQL', link: '/manual-mapping/guides/project-to' },
+            { text: 'Benchmarks', link: '/manual-mapping/guides/benchmarks' },
           ]
         },
       ],
