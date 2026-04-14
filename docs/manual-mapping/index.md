@@ -16,6 +16,8 @@ ManualMapping takes a third approach: **expression-first**. You write a single `
 
 This means the same expression that maps `Order → OrderDto` in memory also generates the `SELECT ... JOIN ... CASE WHEN` query when used with `ProjectTo()`. No separate projection configuration, no `[NotMapped]` workarounds, no runtime surprises.
 
+For DTOs that mostly mirror the entity shape, `AutoTypeConverter` / `AutoBidirectionalConverter` reflect matching name+type properties once at build time and merge them into the same expression — so you only hand-write the fields that need custom logic, without losing `ProjectTo()`.
+
 ## Architecture
 
 ```
@@ -50,8 +52,8 @@ If you override `Convert()`, the compiled expression is bypassed for `Map()` cal
 
 | Feature | ManualMapping | AutoMapper | Mapperly |
 |---|---|---|---|
-| Mapping approach | Hand-written expressions | Convention + config | Source generator |
-| Runtime reflection | None | Heavy (property scanning) | None |
+| Mapping approach | Hand-written expressions (+ optional auto) | Convention + config | Source generator |
+| Runtime reflection | None (auto variant: once at build time) | Heavy (property scanning) | None |
 | `ProjectTo()` support | Expression IS the projection | Builds expression from config | Generates expression trees |
 | DI injection in mapping | `Convert()` override | `IValueResolver` | Not supported |
 | Bidirectional mapping | Single `CreateMap()` call | Two `CreateMap()` calls | Two `MapTo` attributes |
@@ -112,9 +114,10 @@ var dtos = dbContext.Orders
 - You want the same expression to work both in-memory and as a database projection
 
 **Not ideal:**
-- You have 100+ simple DTO mappings with matching property names — AutoMapper or Mapperly save boilerplate
 - You need compile-time code generation with zero runtime cost — Mapperly is faster
 - You never use `ProjectTo()` — the expression-first design doesn't add value
+
+For matching-name DTOs that previously pushed you to AutoMapper, the `AutoTypeConverter` / `AutoBidirectionalConverter` variants cover that case while keeping the single-expression model.
 
 ## Project Structure
 
@@ -124,8 +127,12 @@ ManualMapping/
 │   ├── IMapper.cs              Map(), ProjectTo(), GetProjectionExpression()
 │   └── ITypeConverter.cs       ITypeConverter<TSrc,TDest>, IBidirectionalConverter<TSrc,TDest>
 ├── Converters/             Base classes (inherit from these)
-│   ├── TypeConverter.cs        AsExpression() + virtual Convert()
-│   └── BidirectionalConverter.cs   AsReverseExpression() + virtual ConvertBack()
+│   ├── TypeConverter.cs                   AsExpression() + virtual Convert()
+│   ├── BidirectionalConverter.cs          AsReverseExpression() + virtual ConvertBack()
+│   ├── AutoTypeConverter.cs               CustomExpression() + reflection fill-in
+│   └── AutoBidirectionalConverter.cs      + CustomReverseExpression()
+├── Reflection/             Build-time reflection
+│   └── AutoMapExpressionBuilder.cs        Merges custom bindings with auto ones
 ├── Configuration/          Registration & runtime
 │   ├── MapperConfiguration.cs  CreateMap(), Build()
 │   └── MapperInstance.cs       FrozenDictionary-backed runtime mapper

@@ -209,3 +209,4 @@ public override User ConvertBack(UserDto source)
 | Forward and reverse have completely different dependencies | Two separate `TypeConverter` classes |
 | Only need forward mapping | `TypeConverter` |
 | Need different `withProjectTo` settings per direction | Two separate `TypeConverter` classes |
+| Most fields match by name+type across both directions | [`AutoBidirectionalConverter`](./auto-bidirectional-converter) — reflection fills in matching fields, you write only the exceptions |

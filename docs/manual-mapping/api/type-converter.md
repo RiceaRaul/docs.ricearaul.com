@@ -221,8 +221,12 @@ public interface ITypeConverter<TSrc, TDest>
 
 ```
 ITypeConverter<TSrc, TDest>
-  └─ TypeConverter<TSrc, TDest>              ← one-way
-       └─ BidirectionalConverter<TSrc, TDest>  ← two-way
+  └─ TypeConverter<TSrc, TDest>                    ← one-way
+       ├─ BidirectionalConverter<TSrc, TDest>        ← two-way
+       └─ AutoTypeConverter<TSrc, TDest>             ← one-way + reflection fill-in
+            └─ AutoBidirectionalConverter<TSrc, TDest>  ← two-way + reflection
 ```
 
-This hierarchy means a single `CreateMap()` method handles both — if the converter is bidirectional, the reverse direction is registered automatically via runtime `is` check.
+This hierarchy means a single `CreateMap()` method handles all four — if the converter is bidirectional, the reverse direction is registered automatically via runtime `is` check.
+
+See [`AutoTypeConverter`](./auto-type-converter) and [`AutoBidirectionalConverter`](./auto-bidirectional-converter) for reflection-assisted variants that auto-map matching name+type fields and let you override only what needs custom logic.

@@ -68,6 +68,8 @@ export default defineConfig({
             { text: 'IMapper', link: '/manual-mapping/api/mapper' },
             { text: 'TypeConverter', link: '/manual-mapping/api/type-converter' },
             { text: 'BidirectionalConverter', link: '/manual-mapping/api/bidirectional-converter' },
+            { text: 'AutoTypeConverter', link: '/manual-mapping/api/auto-type-converter' },
+            { text: 'AutoBidirectionalConverter', link: '/manual-mapping/api/auto-bidirectional-converter' },
           ]
         },
         {
