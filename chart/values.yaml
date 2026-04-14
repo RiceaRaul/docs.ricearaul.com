@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   repository: ghcr.io/ricearaul/docs.ricearaul.com
-  tag: sha-ca75424
+  tag: sha-121a1a3
   pullPolicy: Always
 
 namespace: docs-ricearaul-com
