@@ -13,12 +13,14 @@ public abstract class AutoBidirectionalConverter<TSrc, TDest>
 ITypeConverter<TSrc, TDest>
   └─ TypeConverter<TSrc, TDest>
        └─ AutoTypeConverter<TSrc, TDest>
+            │  IgnoredProperties()      — virtual, property names to skip on forward auto-map
             │  CustomExpression()       — virtual, override for custom forward bindings
             │  AsExpression()           — sealed (auto + custom merged)
             │
             └─ AutoBidirectionalConverter<TSrc, TDest>
                  │  implements IBidirectionalConverter<TSrc, TDest>
                  │
+                 │  IgnoredReverseProperties() — virtual, property names to skip on reverse auto-map
                  │  CustomReverseExpression()  — virtual, override for custom reverse bindings
                  │  AsReverseExpression()      — returns built reverse expression
                  │  ConvertBack()              — virtual (compiles reverse expression)
@@ -30,7 +32,30 @@ Note: `AutoBidirectionalConverter` does **not** extend `BidirectionalConverter` 
 
 ## Methods
 
-Inherits `CustomExpression()`, `AsExpression()`, and `Convert()` from [`AutoTypeConverter`](./auto-type-converter). Adds:
+Inherits `IgnoredProperties()`, `CustomExpression()`, `AsExpression()`, and `Convert()` from [`AutoTypeConverter`](./auto-type-converter). Adds:
+
+### IgnoredReverseProperties()
+
+```csharp
+protected virtual IEnumerable<string> IgnoredReverseProperties() => [];
+```
+
+**Virtual.** Override to exclude destination properties from auto-mapping **in the reverse direction** (`TDest → TSrc`). Return property names matched against `TSrc` (the destination in the reverse map). The default returns an empty collection.
+
+Ignored and forward/reverse controls are **independent** — a property in `IgnoredProperties()` still auto-maps in the reverse direction, and vice versa.
+
+```csharp
+public class UserConverter : AutoBidirectionalConverter<User, UserDto>
+{
+    // Forward  User → UserDto  : skip Password
+    protected override IEnumerable<string> IgnoredProperties()
+        => [nameof(User.Password)];
+
+    // Reverse  UserDto → User  : skip CreatedAt (computed on server)
+    protected override IEnumerable<string> IgnoredReverseProperties()
+        => [nameof(User.CreatedAt)];
+}
+```
 
 ### CustomReverseExpression()
 
@@ -104,6 +129,25 @@ public class ProductAutoConverter
 }
 ```
 
+### Ignoring properties per direction
+
+Each direction has its own ignore list. A property excluded in one direction is unaffected in the other:
+
+```csharp
+public class UserConverter : AutoBidirectionalConverter<User, UserDto>
+{
+    // Forward: skip sensitive fields going into the DTO
+    protected override IEnumerable<string> IgnoredProperties()
+        => [nameof(User.PasswordHash), nameof(User.SecurityStamp)];
+
+    // Reverse: skip server-managed fields when writing back to the entity
+    protected override IEnumerable<string> IgnoredReverseProperties()
+        => [nameof(User.CreatedAt), nameof(User.LastLoginAt)];
+}
+```
+
+`PasswordHash` is excluded from `User → UserDto`, but the reverse auto-mapper will still try to match it if a `PasswordHash` property exists on `UserDto` (it won't find one here, so the point is moot — this illustrates that the lists are fully independent).
+
 ### With DI services in `Convert` / `ConvertBack`
 
 Let reflection handle the shape; use overrides for service-backed logic:
@@ -158,4 +202,5 @@ public class UserAutoConverter
 
 - Same rules as [`AutoTypeConverter`](./auto-type-converter#caveats): shallow mapping, ordinal name match, no implicit enum/int conversion, no `Nullable<T> → T` unwrap.
 - Reflection runs once per direction, lazily — no per-call cost.
-- The forward and reverse builds are independent: skipping `CustomExpression()` does not affect `CustomReverseExpression()` and vice versa.
+- The forward and reverse builds are independent: `IgnoredProperties()` / `CustomExpression()` do not affect the reverse direction, and `IgnoredReverseProperties()` / `CustomReverseExpression()` do not affect the forward direction.
+- Explicit bindings in `CustomExpression()` or `CustomReverseExpression()` always win over both auto-mapping and ignore lists.

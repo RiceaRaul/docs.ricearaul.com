@@ -13,8 +13,9 @@ Reflection runs **once**, lazily, on first access to `AsExpression()`. It builds
 1. Taking the optional `CustomExpression()` you provide (if any)
 2. Extracting its bindings as "explicitly mapped" fields
 3. Scanning `TDest` for writable public properties not already bound
-4. For each, looking up a same-named readable property on `TSrc`
-5. Adding `destProp = srcProp` bindings when types are assignment-compatible (or `T → Nullable<T>`)
+4. Skipping any property whose name is in `IgnoredProperties()`
+5. For each remaining property, looking up a same-named readable property on `TSrc`
+6. Adding `destProp = srcProp` bindings when types are assignment-compatible (or `T → Nullable<T>`)
 
 The result is a single expression tree — no per-call reflection, no runtime scanning. `ProjectTo()` still translates to SQL with individual columns.
 
@@ -26,6 +27,7 @@ The result is a single expression tree — no per-call reflection, no runtime sc
 │                               │                         │
 │                               ▼                         │
 │   Reflection scan TDest, skip explicitly-mapped         │
+│                    and skip IgnoredProperties()          │
 │                               │                         │
 │                               ▼                         │
 │   Append bindings for matching TSrc props               │
@@ -39,6 +41,24 @@ The result is a single expression tree — no per-call reflection, no runtime sc
 ```
 
 ## Methods
+
+### IgnoredProperties()
+
+```csharp
+protected virtual IEnumerable<string> IgnoredProperties() => [];
+```
+
+**Virtual.** Override to exclude destination properties from auto-mapping. Return a collection of property names (matched by ordinal, case-sensitive name against `TDest`). The default returns an empty collection — nothing is ignored.
+
+Ignored properties are left at their type's default value unless you explicitly bind them in `CustomExpression()`. Explicit bindings always take precedence and cannot be suppressed by `IgnoredProperties()`.
+
+```csharp
+public class UserConverter : AutoTypeConverter<User, UserDto>
+{
+    protected override IEnumerable<string> IgnoredProperties()
+        => [nameof(User.Password), nameof(User.InternalId)];
+}
+```
 
 ### CustomExpression()
 
@@ -122,6 +142,21 @@ src => new ProductDto
     Price       = src.Price                              // auto
 }
 ```
+
+### Ignoring properties
+
+Prevent specific destination properties from being auto-mapped. Ignored properties stay at their default value:
+
+```csharp
+public class UserConverter : AutoTypeConverter<User, UserDto>
+{
+    // Id and Email auto-map; Password and InternalId are excluded.
+    protected override IEnumerable<string> IgnoredProperties()
+        => [nameof(User.Password), nameof(User.InternalId)];
+}
+```
+
+Ignoring a property that is also in `CustomExpression()` has no effect — the explicit binding always wins.
 
 ### Combining with `Convert()` override
 
